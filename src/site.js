@@ -86,12 +86,13 @@ function setupVertexShaderData(gl, program) {
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 }
 /**
- * Updates the canvas size and sets the viewport and resolution uniform variable.
+ * Updates the canvas size/resolution, viewport and resolution uniform variable.
  * @param gl The WebGL rendering context.
  * @param program The WebGL program.
  * @param canvas The HTML canvas element.
  */
 function updateCanvasSize(gl, program, canvas) {
+    // Set the canvas size/resolution
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     // Set the viewport to match the canvas size
