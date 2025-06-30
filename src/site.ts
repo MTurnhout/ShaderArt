@@ -40,9 +40,9 @@ void main() {
 
         float d = length(uv) * exp(-length(uv0));
 
-        vec3 col = palette(length(uv0) + i * .4 + u_time * .4);
+        vec3 col = palette(length(uv0) + i * 0.4 + u_time * 0.4);
 
-        d = sin(d * 8. + u_time) / 8.;
+        d = sin(d * 8.0 + u_time) / 8.0;
         d = abs(d);
 
         d = pow(0.01 / d, 1.2);
@@ -57,7 +57,11 @@ void main() {
 main();
 
 function main(): void {
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    const canvas = document.querySelector('canvas');
+    if (!canvas) {
+        throw new Error('Canvas element not found. Please ensure there is a <canvas> element in the HTML.');
+    }
+
     const gl = canvas.getContext('webgl');
     if (!gl) {
         throw new Error('WebGL not supported. Please use a browser that supports WebGL.');

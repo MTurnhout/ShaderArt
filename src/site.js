@@ -6,10 +6,13 @@ var vertexShaderSource = "\nattribute vec4 a_position;\n\nvoid main() {\n    gl_
  * WebGL fragment shader from:
  * https://www.youtube.com/watch?v=f4s1h2YETNY
  */
-var fragmentShaderSource = "\nprecision mediump float;\n\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec3 palette( float t ) {\n    vec3 a = vec3(0.5,   0.5,   0.5);\n    vec3 b = vec3(0.5,   0.5,   0.5);\n    vec3 c = vec3(1.0,   1.0,   1.0);\n    vec3 d = vec3(0.263, 0.416, 0.557);\n\n    return a + b * cos(6.28318 * (c * t + d));\n}\n\nvoid main() {\n    vec2 fragCoord = gl_FragCoord.xy;\n\n    vec2 uv = (fragCoord * 2.0 - u_resolution.xy) / u_resolution.y;\n    vec2 uv0 = uv;\n    vec3 finalColor = vec3(0.0);\n    \n    for (float i = 0.0; i < 4.0; i++) {\n        uv = fract(uv * 1.5) - 0.5;\n\n        float d = length(uv) * exp(-length(uv0));\n\n        vec3 col = palette(length(uv0) + i * .4 + u_time * .4);\n\n        d = sin(d * 8. + u_time) / 8.;\n        d = abs(d);\n\n        d = pow(0.01 / d, 1.2);\n\n        finalColor += col * d;\n    }\n        \n    gl_FragColor = vec4(finalColor, 1.0);\n}\n";
+var fragmentShaderSource = "\nprecision mediump float;\n\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec3 palette( float t ) {\n    vec3 a = vec3(0.5,   0.5,   0.5);\n    vec3 b = vec3(0.5,   0.5,   0.5);\n    vec3 c = vec3(1.0,   1.0,   1.0);\n    vec3 d = vec3(0.263, 0.416, 0.557);\n\n    return a + b * cos(6.28318 * (c * t + d));\n}\n\nvoid main() {\n    vec2 fragCoord = gl_FragCoord.xy;\n\n    vec2 uv = (fragCoord * 2.0 - u_resolution.xy) / u_resolution.y;\n    vec2 uv0 = uv;\n    vec3 finalColor = vec3(0.0);\n    \n    for (float i = 0.0; i < 4.0; i++) {\n        uv = fract(uv * 1.5) - 0.5;\n\n        float d = length(uv) * exp(-length(uv0));\n\n        vec3 col = palette(length(uv0) + i * 0.4 + u_time * 0.4);\n\n        d = sin(d * 8.0 + u_time) / 8.0;\n        d = abs(d);\n\n        d = pow(0.01 / d, 1.2);\n\n        finalColor += col * d;\n    }\n        \n    gl_FragColor = vec4(finalColor, 1.0);\n}\n";
 main();
 function main() {
-    var canvas = document.getElementById('canvas');
+    var canvas = document.querySelector('canvas');
+    if (!canvas) {
+        throw new Error('Canvas element not found. Please ensure there is a <canvas> element in the HTML.');
+    }
     var gl = canvas.getContext('webgl');
     if (!gl) {
         throw new Error('WebGL not supported. Please use a browser that supports WebGL.');
