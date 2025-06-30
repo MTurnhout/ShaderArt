@@ -57,29 +57,37 @@ void main() {
 main();
 
 function main(): void {
-    const canvas = document.querySelector('canvas');
-    if (!canvas) {
-        throw new Error('Canvas element not found. Please ensure there is a <canvas> element in the HTML.');
-    }
+  const canvas = document.querySelector("canvas");
+  if (!canvas) {
+    throw new Error(
+      "Canvas element not found. Please ensure there is a <canvas> element in the HTML."
+    );
+  }
 
-    const gl = canvas.getContext('webgl');
-    if (!gl) {
-        throw new Error('WebGL not supported. Please use a browser that supports WebGL.');
-    }
+  const gl = canvas.getContext("webgl");
+  if (!gl) {
+    throw new Error(
+      "WebGL not supported. Please use a browser that supports WebGL."
+    );
+  }
 
-    // Create WebGL program with vertex and fragment shaders
-    const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-    const fragmentShader = createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
-    const program = createProgram(gl, vertexShader, fragmentShader);
+  // Create WebGL program with vertex and fragment shaders
+  const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+  const fragmentShader = createShader(
+    gl,
+    fragmentShaderSource,
+    gl.FRAGMENT_SHADER
+  );
+  const program = createProgram(gl, vertexShader, fragmentShader);
 
-    setupVertexShaderData(gl, program);
+  setupVertexShaderData(gl, program);
 
+  updateCanvasSize(gl, program, canvas);
+  window.addEventListener("resize", () => {
     updateCanvasSize(gl, program, canvas);
-    window.addEventListener('resize', () => {
-        updateCanvasSize(gl, program, canvas);
-    });
+  });
 
-    startAnimation(gl, program);
+  startAnimation(gl, program);
 }
 
 /**
@@ -90,20 +98,24 @@ function main(): void {
  * @param type The type of shader (VERTEX_SHADER or FRAGMENT_SHADER).
  * @returns The created WebGLShader.
  */
-function createShader(gl: WebGLRenderingContext, sourceCode: string, type: GLenum): WebGLShader {
-    const shader = gl.createShader(type);
-    if (!shader) {
-        throw new Error('Could not create shader.');
-    }
+function createShader(
+  gl: WebGLRenderingContext,
+  sourceCode: string,
+  type: GLenum
+): WebGLShader {
+  const shader = gl.createShader(type);
+  if (!shader) {
+    throw new Error("Could not create shader.");
+  }
 
-    gl.shaderSource(shader, sourceCode);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const info = gl.getShaderInfoLog(shader);
-        throw new Error(`Could not compile WebGL program. \n\n${info}`);
-    }
+  gl.shaderSource(shader, sourceCode);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const info = gl.getShaderInfoLog(shader);
+    throw new Error(`Could not compile WebGL program. \n\n${info}`);
+  }
 
-    return shader;
+  return shader;
 }
 
 /**
@@ -113,19 +125,23 @@ function createShader(gl: WebGLRenderingContext, sourceCode: string, type: GLenu
  * @param fragmentShader The compiled fragment shader.
  * @returns The created WebGLProgram.
  */
-function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader): WebGLProgram {
-    const program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        const info = gl.getProgramInfoLog(program);
-        throw new Error(`Could not compile WebGL program. \n\n${info}`);
-    }
+function createProgram(
+  gl: WebGLRenderingContext,
+  vertexShader: WebGLShader,
+  fragmentShader: WebGLShader
+): WebGLProgram {
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const info = gl.getProgramInfoLog(program);
+    throw new Error(`Could not compile WebGL program. \n\n${info}`);
+  }
 
-    gl.useProgram(program);
+  gl.useProgram(program);
 
-    return program;
+  return program;
 }
 
 /**
@@ -134,20 +150,22 @@ function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShader, fra
  * @param gl The WebGL rendering context.
  * @param program The WebGL program.
  */
-function setupVertexShaderData(gl: WebGLRenderingContext, program: WebGLProgram): void {
-    // Create a buffer with the positions of the vertices of the triangles
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    const positions = new Float32Array([
-        -1, -1,  1, -1, -1,  1,
-        -1,  1,  1, -1,  1,  1
-    ]);
-    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+function setupVertexShaderData(
+  gl: WebGLRenderingContext,
+  program: WebGLProgram
+): void {
+  // Create a buffer with the positions of the vertices of the triangles
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  const positions = new Float32Array([
+    -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1,
+  ]);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-    // Bind the position buffer to the shader's attribute
-    const positionLocation = gl.getAttribLocation(program, 'a_position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  // Bind the position buffer to the shader's attribute
+  const positionLocation = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
 /**
@@ -156,17 +174,21 @@ function setupVertexShaderData(gl: WebGLRenderingContext, program: WebGLProgram)
  * @param program The WebGL program.
  * @param canvas The HTML canvas element.
  */
-function updateCanvasSize(gl: WebGLRenderingContext, program: WebGLProgram, canvas: HTMLCanvasElement): void {
-    // Set the canvas size/resolution
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+function updateCanvasSize(
+  gl: WebGLRenderingContext,
+  program: WebGLProgram,
+  canvas: HTMLCanvasElement
+): void {
+  // Set the canvas size/resolution
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
 
-    // Set the viewport to match the canvas size
-    gl.viewport(0, 0, canvas.width, canvas.height);
+  // Set the viewport to match the canvas size
+  gl.viewport(0, 0, canvas.width, canvas.height);
 
-    // Set the resolution uniform variable
-    const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
-    gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+  // Set the resolution uniform variable
+  const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+  gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 }
 
 /**
@@ -174,21 +196,24 @@ function updateCanvasSize(gl: WebGLRenderingContext, program: WebGLProgram, canv
  * @param gl The WebGL rendering context.
  * @param program The WebGL program.
  */
-function startAnimation(gl: WebGLRenderingContext, program: WebGLProgram): void {
-    // Get the time uniform location
-    const timeLocation = gl.getUniformLocation(program, 'u_time');
+function startAnimation(
+  gl: WebGLRenderingContext,
+  program: WebGLProgram
+): void {
+  // Get the time uniform location
+  const timeLocation = gl.getUniformLocation(program, "u_time");
 
-    // Start the animation loop
-    const startTime = performance.now();
-    const render = (currentTime: DOMHighResTimeStamp) => {
-        // Set the time uniform variable
-        gl.uniform1f(timeLocation, (currentTime - startTime) / 1000.0);
+  // Start the animation loop
+  const startTime = performance.now();
+  const render = (currentTime: DOMHighResTimeStamp) => {
+    // Set the time uniform variable
+    gl.uniform1f(timeLocation, (currentTime - startTime) / 1000.0);
 
-        // Draw triangles
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-        requestAnimationFrame(render);
-    };
+    // Draw triangles
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     requestAnimationFrame(render);
+  };
+
+  requestAnimationFrame(render);
 }
